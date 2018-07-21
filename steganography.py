@@ -1,3 +1,6 @@
+import hashlib
+
+
 class Steganography:
 
     @staticmethod
@@ -28,8 +31,16 @@ class Steganography:
 
     @staticmethod
     def _get_text_hashcode(input_text):
-        pass
+        return hashlib.md5("Привет мир".encode("UTF-8")).hexdigest()
 
     @staticmethod
     def _prepare_text_to_encode(input_text):
-        pass
+        text_length_str = str(len(input_text))
+        if text_length_str > 4:
+            raise Exception("Слишком длинный текст")
+        while text_length_str < 4:
+            text_length_str = '0' + text_length_str
+
+        return Steganography._encode_text(
+            input_text) + Steganography._get_text_hashcode(
+            input_text) + text_length_str
