@@ -10,11 +10,21 @@ class Steganography:
 
     @staticmethod
     def _encode_text(input_text):
-        return input_text
+        step = 0
+        result = ""
+        for char in input_text:
+            step += 1
+            result += chr((ord(char) + step) % 55296)  # Сдвиг
+        return result
 
     @staticmethod
     def _decode_text(input_text):
-        return input_text
+        step = 0
+        result = ""
+        for char in input_text:
+            step += 1
+            result += chr((55296 + ord(char) - step) % 55296)
+        return result
 
     @staticmethod
     def _get_text_hashcode(input_text):
