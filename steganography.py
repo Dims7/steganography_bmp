@@ -34,14 +34,16 @@ class Steganography:
 
     @staticmethod
     def _get_text_hashcode(input_text):
-        return hashlib.md5("Привет мир".encode("UTF-8")).hexdigest()
+        return hashlib.md5(input_text.encode("UTF-8")).hexdigest()
 
     @staticmethod
-    def _prepare_text_to_encode(input_text):
+    def _convert_text_to_special_byte_arr_for_encode(input_text):
         text_length_str = Steganography._int_to_bytes(len(input_text), 4)
-        encoded_text = Steganography._encode_text(input_text)
-        text_hashcode = Steganography._get_text_hashcode(input_text)
+        encoded_text = Steganography._encode_text(input_text).encode("UTF-8")
+        text_hashcode = Steganography._get_text_hashcode(input_text).encode(
+            "UTF-8")
         return encoded_text + text_hashcode + text_length_str
+
 
     @staticmethod
     def _bytes_to_int(byte_arr):
