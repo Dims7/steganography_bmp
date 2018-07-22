@@ -13,20 +13,23 @@ class Steganography:
 
     @staticmethod
     def _encode_text(input_text):
+        UTF8_SYMBOLS_COUNT = 55296
         step = 0
         result = ""
         for char in input_text:
             step += 1
-            result += chr((ord(char) + step) % 55296)  # Сдвиг
+            result += chr((ord(char) + step) % UTF8_SYMBOLS_COUNT)  # Сдвиг
         return result
 
     @staticmethod
     def _decode_text(input_text):
+        UTF8_SYMBOLS_COUNT = 55296
         step = 0
         result = ""
         for char in input_text:
             step += 1
-            result += chr((55296 + ord(char) - step) % 55296)
+            result += chr(
+                (UTF8_SYMBOLS_COUNT + ord(char) - step) % UTF8_SYMBOLS_COUNT)
         return result
 
     @staticmethod
@@ -35,12 +38,26 @@ class Steganography:
 
     @staticmethod
     def _prepare_text_to_encode(input_text):
-        text_length_str = str(len(input_text))
-        if text_length_str > 4:
-            raise Exception("Слишком длинный текст")
-        while text_length_str < 4:
-            text_length_str = '0' + text_length_str
+        text_length_str = Steganography._int_to_bytes(len(input_text), 4)
+        encoded_text = Steganography._encode_text(input_text)
+        text_hashcode = Steganography._get_text_hashcode(input_text)
+        return encoded_text + text_hashcode + text_length_str
 
-        return Steganography._encode_text(
-            input_text) + Steganography._get_text_hashcode(
-            input_text) + text_length_str
+    @staticmethod
+    def _bytes_to_int(byte_arr):
+        result_value = ''
+        for byte_pos in range(len(byte_arr) - 1, -1, -1):
+            result_value += bin(byte_arr[byte_pos])[2:].zfill(8)
+        return int(result_value, 2)
+
+    @staticmethod
+    def _int_to_bytes(int_value, result_len):
+        bin_value_str = str(bin(int_value))[2:]
+        bin_value_str = bin_value_str.zfill(len(bin_value_str) // 8 * 8 + 8)
+        result = bytearray()
+        for byte_pos in range(len(bin_value_str) // 8 - 1, -1, -1):
+            result.append(
+                int(bin_value_str[byte_pos * 8:(byte_pos + 1) * 8], 2))
+        while len(result) < result_len:
+            result.append(0)
+        return result

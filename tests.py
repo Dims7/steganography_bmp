@@ -33,5 +33,10 @@ class TestCodeText(unittest.TestCase):
                 string.ascii_letters + string.digits, k=random.randint(3, 25)))
             self.make_test(string_for_test)
 
+class TestIntAndByteConverter(unittest.TestCase):
+
+    def make_test(self):
+        pass
+
 if __name__ == "__main__":
     unittest.main()
