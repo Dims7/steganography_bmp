@@ -1,18 +1,18 @@
-import hashlib
+from crypter import Crypter
 
 
 class Steganography:
 
     @staticmethod
     def encode_to_bmp(file_name, message):
-        f = open('palm.bmp', 'ab')
+        f = open(file_name, 'ab')
         text_to_input = Steganography._convert_text_to_special_byte_arr_for_encode(message)
         f.write(text_to_input)
         f.close()
 
     @staticmethod
     def decode_from_bmp(file_name):
-        f = open('palm.bmp', 'rb')
+        f = open(file_name, 'rb')
         file_size = len(f.read())
         f.seek(file_size - 4)
 
@@ -22,35 +22,13 @@ class Steganography:
         f.close()
         return Steganography._convert_special_byte_arr_to_text(resut_arr)
 
-    @staticmethod
-    def _encode_text(input_text):
-        UTF8_SYMBOLS_COUNT = 55296
-        step = 0
-        result = ""
-        for char in input_text:
-            step += 1
-            result += chr((ord(char) + step) % UTF8_SYMBOLS_COUNT)  # Сдвиг
-        return result
 
-    @staticmethod
-    def _decode_text(input_text):
-        UTF8_SYMBOLS_COUNT = 55296
-        step = 0
-        result = ""
-        for char in input_text:
-            step += 1
-            result += chr(
-                (UTF8_SYMBOLS_COUNT + ord(char) - step) % UTF8_SYMBOLS_COUNT)
-        return result
 
-    @staticmethod
-    def _get_text_hashcode(input_text):
-        return hashlib.md5(input_text.encode("UTF-8")).hexdigest()
 
     @staticmethod
     def _convert_text_to_special_byte_arr_for_encode(input_text):
-        encoded_text = Steganography._encode_text(input_text).encode("UTF-8")
-        text_hashcode = Steganography._get_text_hashcode(input_text).encode(
+        encoded_text = Crypter._encode_text(input_text).encode("UTF-8")
+        text_hashcode = Crypter._get_text_hashcode(input_text).encode(
             "UTF-8")
         result_arr_length = Steganography._int_to_bytes(
             len(encoded_text) + len(text_hashcode) + 4, 4)
@@ -60,13 +38,13 @@ class Steganography:
     def _convert_special_byte_arr_to_text(byte_arr):
         text_hash = byte_arr[-36:-4].decode("UTF-8")
         encoded_text = byte_arr[:-36].decode("UTF-8")
-        text = Steganography._decode_text(encoded_text)
-        hash_of_encoded_text = Steganography._get_text_hashcode(text)
+        text = Crypter._decode_text(encoded_text)
+        hash_of_encoded_text = Crypter._get_text_hashcode(text)
 
         if (hash_of_encoded_text != text_hash):
             raise Exception("Нарушена целостность данных")
 
-        return Steganography._decode_text(encoded_text)
+        return Crypter._decode_text(encoded_text)
 
     @staticmethod
     def _bytes_to_int(byte_arr):
