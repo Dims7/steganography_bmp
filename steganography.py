@@ -44,6 +44,9 @@ class Steganography:
             "UTF-8")
         return encoded_text + text_hashcode + text_length_str
 
+    @staticmethod
+    def _convert_special_byte_arr_to_text(byte_arr):
+        pass
 
     @staticmethod
     def _bytes_to_int(byte_arr):
