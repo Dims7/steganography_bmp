@@ -5,11 +5,22 @@ class Steganography:
 
     @staticmethod
     def encode_to_bmp(file_name, message):
-        pass
+        f = open('palm.bmp', 'ab')
+        text_to_input = Steganography._convert_text_to_special_byte_arr_for_encode(message)
+        f.write(text_to_input)
+        f.close()
 
     @staticmethod
     def decode_from_bmp(file_name):
-        pass
+        f = open('palm.bmp', 'rb')
+        file_size = len(f.read())
+        f.seek(file_size - 4)
+
+        arr_size = Steganography._bytes_to_int(f.read())
+        f.seek(file_size - arr_size)
+        resut_arr = f.read()
+        f.close()
+        return Steganography._convert_special_byte_arr_to_text(resut_arr)
 
     @staticmethod
     def _encode_text(input_text):
@@ -38,19 +49,18 @@ class Steganography:
 
     @staticmethod
     def _convert_text_to_special_byte_arr_for_encode(input_text):
-        text_length_str = Steganography._int_to_bytes(len(input_text), 4)
         encoded_text = Steganography._encode_text(input_text).encode("UTF-8")
         text_hashcode = Steganography._get_text_hashcode(input_text).encode(
             "UTF-8")
-        return encoded_text + text_hashcode + text_length_str
+        result_arr_length = Steganography._int_to_bytes(
+            len(encoded_text) + len(text_hashcode) + 4, 4)
+        return encoded_text + text_hashcode + result_arr_length
 
     @staticmethod
     def _convert_special_byte_arr_to_text(byte_arr):
-        text_len = Steganography._bytes_to_int(byte_arr[-4:])
         text_hash = byte_arr[-36:-4].decode("UTF-8")
         encoded_text = byte_arr[:-36].decode("UTF-8")
         text = Steganography._decode_text(encoded_text)
-
         hash_of_encoded_text = Steganography._get_text_hashcode(text)
 
         if (hash_of_encoded_text != text_hash):
