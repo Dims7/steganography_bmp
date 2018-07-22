@@ -46,7 +46,17 @@ class Steganography:
 
     @staticmethod
     def _convert_special_byte_arr_to_text(byte_arr):
-        pass
+        text_len = Steganography._bytes_to_int(byte_arr[-4:])
+        text_hash = byte_arr[-36:-4].decode("UTF-8")
+        encoded_text = byte_arr[:-36].decode("UTF-8")
+        text = Steganography._decode_text(encoded_text)
+
+        hash_of_encoded_text = Steganography._get_text_hashcode(text)
+
+        if (hash_of_encoded_text != text_hash):
+            raise Exception("Нарушена целостность данных")
+
+        return Steganography._decode_text(encoded_text)
 
     @staticmethod
     def _bytes_to_int(byte_arr):
