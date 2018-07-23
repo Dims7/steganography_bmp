@@ -1,12 +1,26 @@
 from crypter import Crypter
 from converter import Converter
-
+import os
 
 class Steganography:
 
     #ToDo Добавить возможность всавлять текст перед массивом пикселей (параметром)
     #ToDo Добавить проверку на то, что что-то уже закодировано и если да, то удалить прошлое сообщение (параметр)
-    #ToDo Изменять размер файла при вставке сообщения
+
+    @staticmethod
+    def _correct_file_size(file_name):
+        f = open(file_name, 'rb')
+        file_data = bytearray(f.read())
+        f.close()
+
+        file_size = Converter.int_to_bytes(os.path.getsize("palm.bmp"), 4)
+        for i in range(4):
+            file_data[i + 2] = file_size[i]
+
+        f = open(file_name, 'wb')
+        f.write(file_data)
+        f.close()
+
     @staticmethod
     def encode_to_bmp(file_name, message):
         f = open(file_name, 'ab')
@@ -14,7 +28,9 @@ class Steganography:
             message)
         f.write(text_to_input)
         f.close()
+        Steganography._correct_file_size(file_name)
 
+    #ToDo Добавить возможность стирать данные при раскодировке
     @staticmethod
     def decode_from_bmp(file_name):
         f = open(file_name, 'rb')
@@ -27,8 +43,10 @@ class Steganography:
         f.close()
         return Steganography._convert_special_byte_arr_to_text(resut_arr)
 
+    # ToDo сделать проверку на конкретные строки
     @staticmethod
     def _convert_text_to_special_byte_arr_for_encode(input_text):
+
         encoded_text = Crypter.encode_text(input_text).encode("UTF-8")
         text_hashcode = Crypter.get_MD5_hash(input_text).encode(
             "UTF-8")

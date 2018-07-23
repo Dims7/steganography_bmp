@@ -71,10 +71,21 @@ class TestCrypter(unittest.TestCase):
             self.make_test_backward_compatibility(string_for_test)
 
 
+class TestSpecialByteArrFromSteganography(unittest.TestCase):
+    def make_test_backward(self, message):
+        converted_value = Steganography._convert_text_to_special_byte_arr_for_encode(
+            message)
+        result_message = Steganography._convert_special_byte_arr_to_text(
+            converted_value)
+        self.assertEqual(message, result_message)
 
-class TestIntAndByteConverter(unittest.TestCase):
+    def test_backward_compatibility(self):
+        self.make_test_backward("")
+        self.make_test_backward("1")
+        self.make_test_backward("erlpiagjreawg'lkijeraq';hj")
+        self.make_test_backward("щшоуцкфпжоукфпжщшоуфщшоуфкпщшок")
 
-    def make_test(self):
+    def test_simple_messages(self):
         pass
 
 
