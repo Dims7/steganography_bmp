@@ -2,27 +2,29 @@ import hashlib
 
 class Crypter:
 
+    #ToDo Протестировать методы кодировки текста
     @staticmethod
-    def _encode_text(input_text):
-        UTF8_SYMBOLS_COUNT = 55296
+    def encode_text(input_text):
+        UTF8_CHARS_COUNT = 55296
         step = 0
         result = ""
         for char in input_text:
             step += 1
-            result += chr((ord(char) + step) % UTF8_SYMBOLS_COUNT)  # Сдвиг
+            result += chr((ord(char) + step) % UTF8_CHARS_COUNT)
         return result
 
     @staticmethod
-    def _decode_text(input_text):
-        UTF8_SYMBOLS_COUNT = 55296
+    def decode_text(input_text):
+        UTF8_CHARS_COUNT = 55296
         step = 0
         result = ""
         for char in input_text:
             step += 1
             result += chr(
-                (UTF8_SYMBOLS_COUNT + ord(char) - step) % UTF8_SYMBOLS_COUNT)
+                (UTF8_CHARS_COUNT + ord(char) - step) % UTF8_CHARS_COUNT)
         return result
 
+    #ToDo Протестировать метод создания хэшкода
     @staticmethod
-    def _get_text_hashcode(input_text):
+    def get_text_hashcode(input_text):
         return hashlib.md5(input_text.encode("UTF-8")).hexdigest()
