@@ -16,7 +16,8 @@ class TestConverter(unittest.TestCase):
 
     def test_any_values(self):
         self.assertEqual(bytearray(b'\xff'), Converter.int_to_bytes(255, 1))
-        self.assertEqual(bytearray(b'\xff\x00'), Converter.int_to_bytes(255, 2))
+        self.assertEqual(bytearray(b'\xff\x00'),
+                         Converter.int_to_bytes(255, 2))
         self.assertEqual(bytearray(b'\x00'), Converter.int_to_bytes(0, 1))
         self.assertEqual(bytearray(b'\x75'), Converter.int_to_bytes(117, 1))
 
@@ -32,34 +33,43 @@ class TestConverter(unittest.TestCase):
         self.check_exception_long_message(65536, 1)
 
 
-class TestCodeText(unittest.TestCase):
+class TestCrypter(unittest.TestCase):
 
-    def make_test(self, text):
+    def test_hash_code(self):
+        self.assertEqual("3e25960a79dbc69b674cd4ec67a72c62",
+                         Crypter.get_MD5_hash("Hello world"))
+        self.assertEqual("d41d8cd98f00b204e9800998ecf8427e",
+                         Crypter.get_MD5_hash(""))
+        self.assertEqual("aaccedee5cc97822658304e92121bd3f",
+                         Crypter.get_MD5_hash("уекрекыонекуцкнелеунл"))
+
+    def make_test_backward_compatibility(self, text):
         text_for_code = text
         encoded_text = Crypter.encode_text(text_for_code)
         decoded_text = Crypter.decode_text(encoded_text)
         self.assertEqual(text_for_code, decoded_text)
 
     def test_empty_string(self):
-        self.make_test("")
+        self.make_test_backward_compatibility("")
 
     def test_simple_strings(self):
-        self.make_test("a")
-        self.make_test("abc")
-        self.make_test("lol")
-        self.make_test("Hello")
+        self.make_test_backward_compatibility("a")
+        self.make_test_backward_compatibility("abc")
+        self.make_test_backward_compatibility("lol")
+        self.make_test_backward_compatibility("Hello")
 
     def test_symbols(self):
-        self.make_test(".")
-        self.make_test("\\")
-        self.make_test("//")
-        self.make_test("./,!@#$%^&*()!№;%:?*()")
+        self.make_test_backward_compatibility(".")
+        self.make_test_backward_compatibility("\\")
+        self.make_test_backward_compatibility("//")
+        self.make_test_backward_compatibility("./,!@#$%^&*()!№;%:?*()")
 
     def test_random_words(self):
         for _ in range(100):
             string_for_test = "".join(random.SystemRandom().choices(
                 string.ascii_letters + string.digits, k=random.randint(3, 25)))
-            self.make_test(string_for_test)
+            self.make_test_backward_compatibility(string_for_test)
+
 
 
 class TestIntAndByteConverter(unittest.TestCase):

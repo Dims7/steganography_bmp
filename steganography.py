@@ -30,7 +30,7 @@ class Steganography:
     @staticmethod
     def _convert_text_to_special_byte_arr_for_encode(input_text):
         encoded_text = Crypter.encode_text(input_text).encode("UTF-8")
-        text_hashcode = Crypter.get_text_hashcode(input_text).encode(
+        text_hashcode = Crypter.get_MD5_hash(input_text).encode(
             "UTF-8")
         result_arr_length = Converter.int_to_bytes(
             len(encoded_text) + len(text_hashcode) + 4, 4)
@@ -41,7 +41,7 @@ class Steganography:
         text_hash = byte_arr[-36:-4].decode("UTF-8")
         encoded_text = byte_arr[:-36].decode("UTF-8")
         text = Crypter.decode_text(encoded_text)
-        hash_of_encoded_text = Crypter.get_text_hashcode(text)
+        hash_of_encoded_text = Crypter.get_MD5_hash(text)
 
         if (hash_of_encoded_text != text_hash):
             raise Exception("Нарушена целостность данных")

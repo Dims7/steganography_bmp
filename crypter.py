@@ -2,7 +2,6 @@ import hashlib
 
 class Crypter:
 
-    #ToDo Протестировать методы кодировки текста
     @staticmethod
     def encode_text(input_text):
         UTF8_CHARS_COUNT = 55296
@@ -24,7 +23,7 @@ class Crypter:
                 (UTF8_CHARS_COUNT + ord(char) - step) % UTF8_CHARS_COUNT)
         return result
 
-    #ToDo Протестировать метод создания хэшкода
+
     @staticmethod
-    def get_text_hashcode(input_text):
+    def get_MD5_hash(input_text):
         return hashlib.md5(input_text.encode("UTF-8")).hexdigest()
