@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import unittest
 from steganography import Steganography
 import random
@@ -6,6 +8,7 @@ from crypter import Crypter
 from converter import Converter
 
 
+# ToDo написать тесты
 class TestConverter(unittest.TestCase):
 
     def test_backward_compatibility(self):

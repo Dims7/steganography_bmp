@@ -1,4 +1,7 @@
+# -*- coding: UTF-8 -*-
+
 import hashlib
+
 
 class Crypter:
 
@@ -24,7 +27,6 @@ class Crypter:
             result += chr(
                 (UTF8_CHARS_COUNT + ord(char) - step) % UTF8_CHARS_COUNT)
         return result
-
 
     @staticmethod
     def get_MD5_hash(input_text):

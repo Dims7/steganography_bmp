@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 from crypter import Crypter
 from converter import Converter
 import os
