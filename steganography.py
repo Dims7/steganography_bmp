@@ -87,7 +87,8 @@ class Steganography:
         file_data = bytearray(f.read())
         f.close()
 
-        special_byte_arr = Steganography._get_special_byte_array_from_file(file_name)
+        special_byte_arr = Steganography._get_special_byte_array_from_file(
+            file_name)
         if Steganography._check_message_availability(special_byte_arr):
             end_pos = Steganography._find_pixels_array_start_pos(file_name)
             start_pos = end_pos - len(special_byte_arr)
@@ -98,6 +99,9 @@ class Steganography:
             f.write(data_before_message)
             f.write(data_after_message)
             f.close()
+            Steganography._correct_pixels_array_start_pos(file_name,
+                                                          special_byte_arr,
+                                                          False)
         else:
             print("has not messange")
 
