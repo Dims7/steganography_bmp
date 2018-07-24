@@ -4,11 +4,7 @@ import os
 
 
 class Steganography:
-
-    # ToDo Добавить возможность всавлять текст перед массивом пикселей
     # ToDo Добавить проверку на то, что что-то уже закодировано и если да, то удалить прошлое сообщение (параметр)
-
-    # ToDo Добавить тест на проверку изменения размера файла
 
     @staticmethod
     def _find_pixels_array_start_pos(file_name):
@@ -80,17 +76,31 @@ class Steganography:
     # ToDo Добавить возможность стирать данные при раскодировке
     @staticmethod
     def decode_from_bmp(file_name):
+        byte_arr = Steganography._get_special_byte_array_from_file(file_name)
+        decoded_message = Steganography._convert_special_byte_arr_to_text(
+            byte_arr)
+        return decoded_message
+
+    @staticmethod
+    def delete_message_from_bmp(file_name):
         f = open(file_name, 'rb')
-        end_of_message = Steganography._find_pixels_array_start_pos(file_name)
-        f.seek(end_of_message - 4)
-
-        arr_size = Converter.bytes_to_int(f.read(4))
-        f.seek(end_of_message - arr_size)
-        resut_arr = f.read(arr_size)
+        file_data = bytearray(f.read())
         f.close()
-        return Steganography._convert_special_byte_arr_to_text(resut_arr)
 
-    # ToDo сделать проверку на конкретные строки
+        special_byte_arr = Steganography._get_special_byte_array_from_file(file_name)
+        if Steganography._check_message_availability(special_byte_arr):
+            end_pos = Steganography._find_pixels_array_start_pos(file_name)
+            start_pos = end_pos - len(special_byte_arr)
+            data_before_message = file_data[:start_pos]
+            data_after_message = file_data[end_pos:]
+
+            f = open(file_name, 'wb')
+            f.write(data_before_message)
+            f.write(data_after_message)
+            f.close()
+        else:
+            print("has not messange")
+
     @staticmethod
     def _convert_text_to_special_byte_arr_for_encode(input_text):
 
@@ -101,25 +111,33 @@ class Steganography:
             len(encoded_text) + len(text_hashcode) + 4, 4)
         return encoded_text + text_hashcode + result_arr_length
 
-    # ToDo реализовать метод
     # ToDo нужна проверка на то, что длина массива больше файла
     @staticmethod
     def _get_special_byte_array_from_file(file_name):
-        pass
+        f = open(file_name, 'rb')
+        end_of_message = Steganography._find_pixels_array_start_pos(file_name)
+        f.seek(end_of_message - 4)
 
-    # ToDo реализовать метод
+        arr_size = Converter.bytes_to_int(f.read(4))
+        f.seek(end_of_message - arr_size)
+        resut_arr = bytearray(f.read(arr_size))
+        f.close()
+        return resut_arr
+
     @staticmethod
-    def _check_message_availability(file_name):
-        pass
+    def _check_message_availability(special_byte_arr):
+        hash_from_byte_arr = special_byte_arr[-36:-4].decode("UTF-8")
+        encoded_text = special_byte_arr[:-36].decode("UTF-8")
+        decoded_text = Crypter.decode_text(encoded_text)
+        hash_of_decoded_text = Crypter.get_MD5_hash(decoded_text)
+
+        return hash_of_decoded_text == hash_from_byte_arr
 
     @staticmethod
-    def _convert_special_byte_arr_to_text(byte_arr):
-        text_hash = byte_arr[-36:-4].decode("UTF-8")
-        encoded_text = byte_arr[:-36].decode("UTF-8")
-        text = Crypter.decode_text(encoded_text)
-        hash_of_encoded_text = Crypter.get_MD5_hash(text)
-
-        if hash_of_encoded_text != text_hash:
+    def _convert_special_byte_arr_to_text(special_byte_arr):
+        if not Steganography._check_message_availability(special_byte_arr):
             raise Exception("Нарушена целостность данных")
 
-        return Crypter.decode_text(encoded_text)
+        encoded_text = special_byte_arr[:-36].decode("UTF-8")
+        decoded_text = Crypter.decode_text(encoded_text)
+        return decoded_text

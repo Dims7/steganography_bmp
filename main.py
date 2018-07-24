@@ -4,5 +4,8 @@ from steganography import Steganography
 #ToDo Проверить работу на всех файлах в архиве
 #ToDo Написать ReadMe
 if __name__ == "__main__":
+
     Steganography.encode_to_bmp("palm.bmp", "Jorj")
     print(Steganography.decode_from_bmp("palm.bmp"))
+
+    # Steganography.delete_message_from_bmp('palm.bmp')
