@@ -2,6 +2,7 @@ class Converter:
 
     @staticmethod
     def bytes_to_int(byte_arr):
+        """Конвертирует массив байт в целое число."""
         tmp_arr = []
         for byte_pos in range(len(byte_arr) - 1, -1, -1):
             tmp_arr.append(bin(byte_arr[byte_pos])[2:].zfill(8))
@@ -9,6 +10,7 @@ class Converter:
 
     @staticmethod
     def int_to_bytes(int_value, result_len):
+        """Конвертирует целое число в массив байт."""
         if len(bin(int_value)) - 2 > result_len * 8:
             raise ValueError("Message to long")
 
