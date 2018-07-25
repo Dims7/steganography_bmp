@@ -10,6 +10,7 @@ import shutil
 
 
 # ToDo написать тесты
+# ToDo прогнать на PEP 8 валидаторе
 class TestConverter(unittest.TestCase):
 
     def test_backward_compatibility(self):
@@ -77,7 +78,7 @@ class TestCrypter(unittest.TestCase):
 
 class TestSpecialByteArrFromSteganography(unittest.TestCase):
     def make_test_backward(self, message):
-        converted_value = Steganography._convert_text_to_special_byte_arr_for_encode(
+        converted_value = Steganography._convert_text_to_special_byte_arr(
             message)
         result_message = Steganography._convert_special_byte_arr_to_text(
             converted_value)

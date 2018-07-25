@@ -3,7 +3,6 @@
 from steganography import Steganography
 import sys
 
-# ToDo Прогнать на PEP8 валидаторе
 if __name__ == "__main__":
     flag_encode = False
     flag_decode = False

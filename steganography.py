@@ -62,7 +62,7 @@ class Steganography:
         file_data = bytearray(f.read())
         f.close()
 
-        text_to_input = Steganography._convert_text_to_special_byte_arr_for_encode(
+        text_to_input = Steganography._convert_text_to_special_byte_arr(
             message)
         pixels_arr_start = Steganography._get_pixels_array_start_pos(
             file_name)
@@ -118,7 +118,7 @@ class Steganography:
                 print("Message was not found.")
 
     @staticmethod
-    def _convert_text_to_special_byte_arr_for_encode(input_text):
+    def _convert_text_to_special_byte_arr(input_text):
         """Конвертирует текст в специальный байтовый массив,
         который впоследствии будет вставлен в .bmp файл."""
         encoded_text = Crypter.encode_text(input_text).encode("UTF-8")
