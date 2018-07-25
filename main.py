@@ -3,8 +3,9 @@
 from steganography import Steganography
 import sys
 
-# ToDo добавить работу с аргументами
 # ToDo Проверить работу на всех файлах в архиве
+# ToDo Сделать красивый ReadMe
+# ToDo Прогнать на PEP8 валидаторе
 if __name__ == "__main__":
     flag_encode = False
     flag_decode = False
@@ -41,8 +42,9 @@ if __name__ == "__main__":
         flag_error = True
 
     if not flag_error and flag_path_file:
-        if (flag_encode and flag_message and not flag_decode and
-                not flag_delete):
+        if flag_encode and flag_message and not flag_decode:
+            if flag_delete:
+                Steganography.delete_message_from_bmp(file_path, False)
             Steganography.encode_to_bmp(file_path, message)
         elif flag_decode and not flag_message and not flag_encode:
             print(Steganography.decode_from_bmp(file_path))
