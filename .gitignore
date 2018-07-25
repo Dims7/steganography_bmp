@@ -6,3 +6,5 @@ palm.bmp
 ToDo
 *.pyc
 /bmp_files_for_test
+.coverage
+/htmlcov

@@ -3,6 +3,9 @@
 from steganography import Steganography
 import sys
 
+
+# ToDo переделать всё под argparse
+
 if __name__ == "__main__":
     flag_encode = False
     flag_decode = False
@@ -21,6 +24,7 @@ if __name__ == "__main__":
         elif arg == "-e":
             flag_encode = True
         elif arg == "-d":
+
             flag_decode = True
         elif arg == "-c":
             flag_delete = True

@@ -7,9 +7,12 @@ import string
 from crypter import Crypter
 from converter import Converter
 import shutil
+import main
+import os
 
 
-# ToDo написать тесты
+
+# ToDo Протестировать main.py
 # ToDo прогнать на PEP 8 валидаторе
 class TestConverter(unittest.TestCase):
 
@@ -93,27 +96,50 @@ class TestSpecialByteArrFromSteganography(unittest.TestCase):
 
 class TestCodeAllTypeOfBmpFiles(unittest.TestCase):
 
-    def check_file(self, file_path):
+    def check_file_code_decode(self, file_path):
         Steganography.encode_to_bmp(file_path, "Code")
         result = Steganography.decode_from_bmp((file_path))
         self.assertEqual("Code", result)
 
-    def test_code_decode_all_type_of_bmp_files(self):
+    def test_code_decode(self):
         folder_name = self.create_folder_with_tmp_bmp_files(
             "bmp_files_for_test")
         prefix = folder_name + "/"
         suffix = ".bmp"
         for i in range(1, 16):
             file_name = prefix + str(i) + suffix
-            self.check_file(file_name)
+            self.check_file_code_decode(file_name)
         self.delete_folder_with_bmp_files(folder_name)
 
     def create_folder_with_tmp_bmp_files(self, path_to_bmp):
+        if os.path.exists("tmp_test_dir"):
+            shutil.rmtree("tmp_test_dir")
         shutil.copytree(path_to_bmp, "tmp_test_dir")
         return "tmp_test_dir"
 
     def delete_folder_with_bmp_files(self, path_to_bmp):
         shutil.rmtree(path_to_bmp)
+
+    def check_delete_mes(self, file_name):
+        Steganography.encode_to_bmp(file_name, "Some text")
+        coded_text = Steganography.decode_from_bmp(file_name)
+        self.assertEqual("Some text", coded_text)
+        #ToDO хз что тут
+        Steganography.delete_message_from_bmp(file_name, False)
+
+        with self.assertRaises(Exception) as cm:
+            Steganography.decode_from_bmp(file_name)
+        exception = cm.exception
+        self.assertEqual("Data integrity is corrupted", exception.args[0])
+    def test_delete_message(self):
+        folder_name = self.create_folder_with_tmp_bmp_files(
+            "bmp_files_for_test")
+        prefix = folder_name + "/"
+        suffix = ".bmp"
+        for i in range(1, 16):
+            file_name = prefix + str(i) + suffix
+            self.check_delete_mes(file_name)
+        self.delete_folder_with_bmp_files(folder_name)
 
 
 if __name__ == "__main__":
