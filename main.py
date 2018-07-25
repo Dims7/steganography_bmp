@@ -3,8 +3,6 @@
 from steganography import Steganography
 import sys
 
-# ToDo Проверить работу на всех файлах в архиве
-# ToDo Сделать красивый ReadMe
 # ToDo Прогнать на PEP8 валидаторе
 if __name__ == "__main__":
     flag_encode = False

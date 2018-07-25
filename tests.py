@@ -6,6 +6,7 @@ import random
 import string
 from crypter import Crypter
 from converter import Converter
+import shutil
 
 
 # ToDo написать тесты
@@ -88,8 +89,30 @@ class TestSpecialByteArrFromSteganography(unittest.TestCase):
         self.make_test_backward("erlpiagjreawg'lkijeraq';hj")
         self.make_test_backward("щшоуцкфпжоукфпжщшоуфщшоуфкпщшок")
 
-    def test_simple_messages(self):
-        pass
+
+class TestCodeAllTypeOfBmpFiles(unittest.TestCase):
+
+    def check_file(self, file_path):
+        Steganography.encode_to_bmp(file_path, "Code")
+        result = Steganography.decode_from_bmp((file_path))
+        self.assertEqual("Code", result)
+
+    def test_code_decode_all_type_of_bmp_files(self):
+        folder_name = self.create_folder_with_tmp_bmp_files(
+            "bmp_files_for_test")
+        prefix = folder_name + "/"
+        suffix = ".bmp"
+        for i in range(1, 16):
+            file_name = prefix + str(i) + suffix
+            self.check_file(file_name)
+        self.delete_folder_with_bmp_files(folder_name)
+
+    def create_folder_with_tmp_bmp_files(self, path_to_bmp):
+        shutil.copytree(path_to_bmp, "tmp_test_dir")
+        return "tmp_test_dir"
+
+    def delete_folder_with_bmp_files(self, path_to_bmp):
+        shutil.rmtree(path_to_bmp)
 
 
 if __name__ == "__main__":
