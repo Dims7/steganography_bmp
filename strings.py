@@ -1,0 +1,6 @@
+WRONG_ARGUMENTS = "Wrong arguments."
+ENCODE_COMPLETE = "Encode complete."
+DATA_CORRUPTED = "Data integrity is corrupted"
+MESSAGE_DELETED = "Message was deleted."
+MESSAGE_NOT_FOUND = "Message was not found."
+LONG_MESSAGE = "Message to long"

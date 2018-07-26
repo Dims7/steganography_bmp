@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-
+import strings
 
 class Converter:
 
@@ -15,7 +15,7 @@ class Converter:
     def int_to_bytes(int_value, result_len):
         """Конвертирует целое число в массив байт."""
         if len(bin(int_value)) - 2 > result_len * 8:
-            raise ValueError("Message to long")
+            raise ValueError(strings.LONG_MESSAGE)
 
         bin_value_str = str(bin(int_value))[2:]
         bin_value_str = bin_value_str.zfill(

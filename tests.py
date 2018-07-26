@@ -10,6 +10,7 @@ import shutil
 import main
 import os
 import sys
+import strings
 
 
 def create_folder_with_tmp_bmp_files(path_to_bmp):
@@ -44,7 +45,7 @@ class TestConverter(unittest.TestCase):
         with self.assertRaises(ValueError) as cm:
             Converter.int_to_bytes(value, count)
         exception = cm.exception
-        self.assertEqual("Message to long", exception.args[0])
+        self.assertEqual(strings.LONG_MESSAGE, exception.args[0])
 
     def test_so_big_int_value(self):
         self.check_exception_long_message(256, 1)
@@ -131,7 +132,7 @@ class TestCodeAllTypeOfBmpFiles(unittest.TestCase):
         with self.assertRaises(Exception) as cm:
             Steganography.decode_from_bmp(file_name)
         exception = cm.exception
-        self.assertEqual("Data integrity is corrupted", exception.args[0])
+        self.assertEqual(strings.DATA_CORRUPTED, exception.args[0])
 
     def test_delete_message(self):
         folder_name = create_folder_with_tmp_bmp_files(
@@ -148,7 +149,7 @@ class TestArguments(unittest.TestCase):
     def do_encode(self, file_name, encode_value):
         sys.argv = ['main.py', '-e', encode_value, '-f', file_name]
         result = main.run()
-        self.assertEqual("Encode complete.", result)
+        self.assertEqual(strings.ENCODE_COMPLETE, result)
 
     def do_decode(self, file_name, encoded_value):
         sys.argv = ['main.py', '-d', '-f', file_name]
@@ -163,38 +164,38 @@ class TestArguments(unittest.TestCase):
         with self.assertRaises(Exception) as cm:
             Steganography.decode_from_bmp(file_name)
         exception = cm.exception
-        self.assertEqual("Data integrity is corrupted", exception.args[0])
+        self.assertEqual(strings.DATA_CORRUPTED, exception.args[0])
 
     def do_clear_file_with_mes(self, file_name):
         sys.argv = ['main.py', '-c', '-f', file_name]
         result = main.run()
-        self.assertEqual("Message was deleted.", result)
+        self.assertEqual(strings.MESSAGE_DELETED, result)
 
     def do_clear_file_without_mes(self, file_name):
         sys.argv = ['main.py', '-c', '-f', file_name]
         try:
             result = main.run()
         except Exception as exception:
-            self.assertEqual("Data integrity is corrupted", exception.args[0])
+            self.assertEqual(strings.DATA_CORRUPTED, exception.args[0])
         else:
-            self.assertEqual("Message was not found.", result)
+            self.assertEqual(strings.MESSAGE_NOT_FOUND, result)
 
     def do_encode_with_delete_previous(self, file_name, encode_value):
         sys.argv = ['main.py', '-e', encode_value, '-f', file_name, '-c']
         result = main.run()
-        self.assertEqual("Encode complete.", result)
+        self.assertEqual(strings.ENCODE_COMPLETE, result)
 
         Steganography.delete_message_from_bmp(file_name)
 
         with self.assertRaises(Exception) as cm:
             Steganography.decode_from_bmp(file_name)
         exception = cm.exception
-        self.assertEqual("Data integrity is corrupted", exception.args[0])
+        self.assertEqual(strings.DATA_CORRUPTED, exception.args[0])
 
     def do_check_wrong_arguments(self, *args):
         sys.argv = ['main.py', *args]
         result = main.run()
-        self.assertEqual("Wrong arguments.", result)
+        self.assertEqual(strings.WRONG_ARGUMENTS, result)
 
     def test_with_wrong_args(self):
         self.do_check_wrong_arguments('-f', '123.bmp')

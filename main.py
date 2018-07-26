@@ -3,7 +3,9 @@
 from steganography import Steganography
 import sys
 import argparse
+import strings
 
+#ToDo добавить help
 
 def create_parser():
     parser = argparse.ArgumentParser()
@@ -24,7 +26,7 @@ def run():
         if namespace.clear:
             Steganography.delete_message_from_bmp(namespace.filepath)
         Steganography.encode_to_bmp(namespace.filepath, namespace.encode)
-        return "Encode complete."
+        return strings.ENCODE_COMPLETE
 
     elif namespace.decode and namespace.encode is None:
         message = Steganography.decode_from_bmp(namespace.filepath)
@@ -35,9 +37,8 @@ def run():
     elif (namespace.clear and namespace.encode is None and
           not namespace.decode):
         return Steganography.delete_message_from_bmp(namespace.filepath)
-
     else:
-        return "Wrong arguments."
+        return strings.WRONG_ARGUMENTS
 
 
 if __name__ == "__main__":

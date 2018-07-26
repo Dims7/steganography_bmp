@@ -3,6 +3,7 @@
 from crypter import Crypter
 from converter import Converter
 import os
+import strings
 
 
 class Steganography:
@@ -43,7 +44,7 @@ class Steganography:
         with open(file_name, 'rb') as f:
             file_data = bytearray(f.read())
 
-        file_size = Converter.int_to_bytes(os.path.getsize("palm.bmp"), 4)
+        file_size = Converter.int_to_bytes(os.path.getsize(file_name), 4)
         for i in range(4):
             file_data[i + 2] = file_size[i]
 
@@ -103,9 +104,9 @@ class Steganography:
                                                           special_byte_arr,
                                                           False)
 
-            return "Message was deleted."
+            return strings.MESSAGE_DELETED
         else:
-            return "Message was not found."
+            return strings.MESSAGE_NOT_FOUND
 
     @staticmethod
     def _convert_text_to_special_byte_arr(input_text):
@@ -129,7 +130,7 @@ class Steganography:
 
             arr_size = Converter.bytes_to_int(f.read(4))
             if end_of_message < arr_size:
-                raise Exception("Data integrity is corrupted")
+                raise Exception(strings.DATA_CORRUPTED)
             f.seek(end_of_message - arr_size)
             resut_arr = bytearray(f.read(arr_size))
             return resut_arr
@@ -144,13 +145,13 @@ class Steganography:
             hash_of_decoded_text = Crypter.get_MD5_hash(decoded_text)
             return hash_of_decoded_text == hash_from_byte_arr
         except UnicodeDecodeError:
-            raise Exception("Data integrity is corrupted")
+            raise Exception(strings.DATA_CORRUPTED)
 
     @staticmethod
     def _convert_special_byte_arr_to_text(special_byte_arr):
         """Конвертирует байтовый массив с сообщением обратно в сообщение."""
         if not Steganography._check_message_availability(special_byte_arr):
-            raise Exception("Data integrity is corrupted")
+            raise Exception(strings.DATA_CORRUPTED)
         encoded_text = special_byte_arr[:-36].decode("UTF-8")
         decoded_text = Crypter.decode_text(encoded_text)
         return decoded_text
