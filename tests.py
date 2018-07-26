@@ -9,11 +9,22 @@ from converter import Converter
 import shutil
 import main
 import os
+import sys
 
 
+def create_folder_with_tmp_bmp_files(path_to_bmp):
+    # Последующие две строчки запускаются только в случае аварийного завершения
+    # предыдущих тестов
+    if os.path.exists("tmp_test_dir"):
+        shutil.rmtree("tmp_test_dir")
+    shutil.copytree(path_to_bmp, "tmp_test_dir")
+    return "tmp_test_dir"
 
-# ToDo Протестировать main.py
-# ToDo прогнать на PEP 8 валидаторе
+
+def delete_folder_with_bmp_files(path_to_bmp):
+    shutil.rmtree(path_to_bmp)
+
+
 class TestConverter(unittest.TestCase):
 
     def test_backward_compatibility(self):
@@ -102,44 +113,113 @@ class TestCodeAllTypeOfBmpFiles(unittest.TestCase):
         self.assertEqual("Code", result)
 
     def test_code_decode(self):
-        folder_name = self.create_folder_with_tmp_bmp_files(
+        folder_name = create_folder_with_tmp_bmp_files(
             "bmp_files_for_test")
         prefix = folder_name + "/"
         suffix = ".bmp"
         for i in range(1, 16):
             file_name = prefix + str(i) + suffix
             self.check_file_code_decode(file_name)
-        self.delete_folder_with_bmp_files(folder_name)
-
-    def create_folder_with_tmp_bmp_files(self, path_to_bmp):
-        if os.path.exists("tmp_test_dir"):
-            shutil.rmtree("tmp_test_dir")
-        shutil.copytree(path_to_bmp, "tmp_test_dir")
-        return "tmp_test_dir"
-
-    def delete_folder_with_bmp_files(self, path_to_bmp):
-        shutil.rmtree(path_to_bmp)
+        delete_folder_with_bmp_files(folder_name)
 
     def check_delete_mes(self, file_name):
         Steganography.encode_to_bmp(file_name, "Some text")
         coded_text = Steganography.decode_from_bmp(file_name)
         self.assertEqual("Some text", coded_text)
-        #ToDO хз что тут
         Steganography.delete_message_from_bmp(file_name, False)
 
         with self.assertRaises(Exception) as cm:
             Steganography.decode_from_bmp(file_name)
         exception = cm.exception
         self.assertEqual("Data integrity is corrupted", exception.args[0])
+
     def test_delete_message(self):
-        folder_name = self.create_folder_with_tmp_bmp_files(
+        folder_name = create_folder_with_tmp_bmp_files(
             "bmp_files_for_test")
         prefix = folder_name + "/"
         suffix = ".bmp"
         for i in range(1, 16):
             file_name = prefix + str(i) + suffix
             self.check_delete_mes(file_name)
-        self.delete_folder_with_bmp_files(folder_name)
+        delete_folder_with_bmp_files(folder_name)
+
+
+class TestArguments(unittest.TestCase):
+    def do_encode(self, file_name, encode_value):
+        sys.argv = ['main.py', '-e', encode_value, '-f', file_name]
+        result = main.run()
+        self.assertEqual("Encode complete.", result)
+
+    def do_decode(self, file_name, encoded_value):
+        sys.argv = ['main.py', '-d', '-f', file_name]
+        result = main.run()
+        self.assertEqual(encoded_value, result)
+
+    def do_decode_with_clear(self, file_name, encoded_value):
+        sys.argv = ['main.py', '-d', '-f', file_name, '-c']
+        result = main.run()
+        self.assertEqual(encoded_value, result)
+
+        with self.assertRaises(Exception) as cm:
+            Steganography.decode_from_bmp(file_name)
+        exception = cm.exception
+        self.assertEqual("Data integrity is corrupted", exception.args[0])
+
+    def do_clear_file_with_mes(self, file_name):
+        sys.argv = ['main.py', '-c', '-f', file_name]
+        result = main.run()
+        self.assertEqual("Message was deleted.", result)
+
+    def do_clear_file_without_mes(self, file_name):
+        sys.argv = ['main.py', '-c', '-f', file_name]
+        try:
+            result = main.run()
+        except Exception as exception:
+            self.assertEqual("Data integrity is corrupted", exception.args[0])
+        else:
+            self.assertEqual("Message was not found.", result)
+
+    def do_encode_with_delete_previous(self, file_name, encode_value):
+        sys.argv = ['main.py', '-e', encode_value, '-f', file_name, '-c']
+        result = main.run()
+        self.assertEqual("Encode complete.", result)
+
+        Steganography.delete_message_from_bmp(file_name, False)
+
+        with self.assertRaises(Exception) as cm:
+            Steganography.decode_from_bmp(file_name)
+        exception = cm.exception
+        self.assertEqual("Data integrity is corrupted", exception.args[0])
+
+    def do_check_wrong_arguments(self, *args):
+        sys.argv = ['main.py', *args]
+        result = main.run()
+        self.assertEqual("Wrong arguments.", result)
+
+    def test_with_wrong_args(self):
+        self.do_check_wrong_arguments('-f', '123.bmp')
+        self.do_check_wrong_arguments('-f', '123.bmp', '-e', '123', '-d')
+        self.do_check_wrong_arguments('-f', '123.bmp', '-e', '123', '-decode')
+
+    def do_test_file(self, file_name, encode_value):
+        self.do_clear_file_without_mes(file_name)
+        self.do_encode(file_name, encode_value)
+        self.do_decode(file_name, encode_value)
+        self.do_decode_with_clear(file_name, encode_value)
+        self.do_encode(file_name, encode_value)
+        self.do_encode_with_delete_previous(file_name, encode_value)
+        self.do_encode(file_name, encode_value)
+        self.do_clear_file_with_mes(file_name)
+
+    def test_arguments(self):
+        folder_name = create_folder_with_tmp_bmp_files(
+            "bmp_files_for_test")
+        prefix = folder_name + "/"
+        suffix = ".bmp"
+        for i in range(1, 16):
+            file_name = prefix + str(i) + suffix
+            self.do_test_file(file_name, str(i))
+        delete_folder_with_bmp_files(folder_name)
 
 
 if __name__ == "__main__":

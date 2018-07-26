@@ -103,10 +103,10 @@ class Steganography:
                                                           special_byte_arr,
                                                           False)
             if is_need_result_message:
-                print("Message was deleted.")
+                return "Message was deleted."
         else:
             if is_need_result_message:
-                print("Message was not found.")
+                return "Message was not found."
 
     @staticmethod
     def _convert_text_to_special_byte_arr(input_text):
@@ -125,7 +125,8 @@ class Steganography:
         """Извлекает из файла специальный байтовый массив,
         который содержит метаданные и зашифрованное сообщение"""
         with open(file_name, 'rb') as f:
-            end_of_message = Steganography._get_pixels_array_start_pos(file_name)
+            end_of_message = Steganography._get_pixels_array_start_pos(
+                file_name)
             f.seek(end_of_message - 4)
 
             arr_size = Converter.bytes_to_int(f.read(4))

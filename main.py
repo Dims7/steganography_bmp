@@ -2,57 +2,45 @@
 
 from steganography import Steganography
 import sys
+import argparse
 
 
-# ToDo переделать всё под argparse
+def create_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', '--filename', nargs='?', required=True)
+    parser.add_argument('-e', '--encode')
+    parser.add_argument('-d', '--decode', action='store_const', const=True,
+                        default=False)
+    parser.add_argument('-c', '--clear', action='store_const', const=True,
+                        default=False)
+    return parser
+
+
+def run():
+    parser = create_parser()
+    namespace = parser.parse_args(sys.argv[1:])
+
+    if namespace.encode is not None and not namespace.decode:
+        if namespace.clear:
+            Steganography.delete_message_from_bmp(namespace.filename,
+                                                  False)
+        Steganography.encode_to_bmp(namespace.filename, namespace.encode)
+        return "Encode complete."
+
+    elif namespace.decode and namespace.encode is None:
+        message = Steganography.decode_from_bmp(namespace.filename)
+        if namespace.clear:
+            Steganography.delete_message_from_bmp(namespace.filename,
+                                                  False)
+        return message
+
+    elif (namespace.clear and namespace.encode is None and
+          not namespace.decode):
+        return Steganography.delete_message_from_bmp(namespace.filename, True)
+
+    else:
+        return "Wrong arguments."
+
 
 if __name__ == "__main__":
-    flag_encode = False
-    flag_decode = False
-    flag_delete = False
-    flag_message = False
-    flag_path_file = False
-
-    message = None
-    file_path = None
-
-    for arg in sys.argv[1:]:
-        if flag_message and message is None:
-            message = arg
-        elif flag_path_file and file_path is None:
-            file_path = arg
-        elif arg == "-e":
-            flag_encode = True
-        elif arg == "-d":
-
-            flag_decode = True
-        elif arg == "-c":
-            flag_delete = True
-        elif arg == "-m":
-            flag_message = True
-        elif arg == "-f":
-            flag_path_file = True
-
-    flag_error = False
-
-    if file_path is None:
-        print("You must enter the path to the file with the -f argument")
-        flag_error = True
-    if flag_encode and message is None:
-        print("You must enter a message with the -m argument")
-        flag_error = True
-
-    if not flag_error and flag_path_file:
-        if flag_encode and flag_message and not flag_decode:
-            if flag_delete:
-                Steganography.delete_message_from_bmp(file_path, False)
-            Steganography.encode_to_bmp(file_path, message)
-        elif flag_decode and not flag_message and not flag_encode:
-            print(Steganography.decode_from_bmp(file_path))
-            if flag_delete:
-                Steganography.delete_message_from_bmp(file_path, False)
-        elif (flag_delete and not flag_message and not flag_encode and
-              not flag_message and not flag_decode):
-            Steganography.delete_message_from_bmp(file_path, True)
-        else:
-            print("Wrong arguments.")
+    print(run())
