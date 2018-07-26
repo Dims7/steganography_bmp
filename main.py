@@ -5,16 +5,16 @@ import sys
 import argparse
 import strings
 
-#ToDo добавить help
 
 def create_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--filepath', nargs='?', required=True)
-    parser.add_argument('-e', '--encode')
+    parser.add_argument('-f', '--filepath', nargs='?', required=True,
+                        help=strings.HELP_FILEPATH)
+    parser.add_argument('-e', '--encode', help=strings.HELP_ENCODE)
     parser.add_argument('-d', '--decode', action='store_const', const=True,
-                        default=False)
+                        default=False, help=strings.HELP_DECODE)
     parser.add_argument('-c', '--clear', action='store_const', const=True,
-                        default=False)
+                        default=False, help=strings.HELP_CLEAR)
     return parser
 
 

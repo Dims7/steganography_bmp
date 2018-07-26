@@ -4,3 +4,8 @@ DATA_CORRUPTED = "Data integrity is corrupted"
 MESSAGE_DELETED = "Message was deleted."
 MESSAGE_NOT_FOUND = "Message was not found."
 LONG_MESSAGE = "Message to long"
+
+HELP_FILEPATH = "Path to the file"
+HELP_ENCODE = "Message encryption"
+HELP_DECODE = "Decrypt a message"
+HELP_CLEAR = "Delete the encrypted message. Compatible with -e/-d"
