@@ -126,7 +126,7 @@ class TestCodeAllTypeOfBmpFiles(unittest.TestCase):
         Steganography.encode_to_bmp(file_name, "Some text")
         coded_text = Steganography.decode_from_bmp(file_name)
         self.assertEqual("Some text", coded_text)
-        Steganography.delete_message_from_bmp(file_name, False)
+        Steganography.delete_message_from_bmp(file_name)
 
         with self.assertRaises(Exception) as cm:
             Steganography.decode_from_bmp(file_name)
@@ -184,7 +184,7 @@ class TestArguments(unittest.TestCase):
         result = main.run()
         self.assertEqual("Encode complete.", result)
 
-        Steganography.delete_message_from_bmp(file_name, False)
+        Steganography.delete_message_from_bmp(file_name)
 
         with self.assertRaises(Exception) as cm:
             Steganography.decode_from_bmp(file_name)

@@ -82,7 +82,7 @@ class Steganography:
         return decoded_message
 
     @staticmethod
-    def delete_message_from_bmp(file_name, is_need_result_message):
+    def delete_message_from_bmp(file_name):
         """Удаляет шифрованное соообщение из .bmp файла при наличии.
         Поле is_need_result_message отвечает за вывод результатов в консоль."""
         with open(file_name, 'rb') as f:
@@ -102,11 +102,10 @@ class Steganography:
             Steganography._correct_pixels_array_start_pos(file_name,
                                                           special_byte_arr,
                                                           False)
-            if is_need_result_message:
-                return "Message was deleted."
+
+            return "Message was deleted."
         else:
-            if is_need_result_message:
-                return "Message was not found."
+            return "Message was not found."
 
     @staticmethod
     def _convert_text_to_special_byte_arr(input_text):
@@ -119,7 +118,6 @@ class Steganography:
             len(encoded_text) + len(text_hashcode) + 4, 4)
         return encoded_text + text_hashcode + result_arr_length
 
-    # ToDo нужна проверка на то, что длина массива больше файла
     @staticmethod
     def _get_special_byte_array_from_file(file_name):
         """Извлекает из файла специальный байтовый массив,

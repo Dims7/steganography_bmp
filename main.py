@@ -7,7 +7,7 @@ import argparse
 
 def create_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--filename', nargs='?', required=True)
+    parser.add_argument('-f', '--filepath', nargs='?', required=True)
     parser.add_argument('-e', '--encode')
     parser.add_argument('-d', '--decode', action='store_const', const=True,
                         default=False)
@@ -22,21 +22,19 @@ def run():
 
     if namespace.encode is not None and not namespace.decode:
         if namespace.clear:
-            Steganography.delete_message_from_bmp(namespace.filename,
-                                                  False)
-        Steganography.encode_to_bmp(namespace.filename, namespace.encode)
+            Steganography.delete_message_from_bmp(namespace.filepath)
+        Steganography.encode_to_bmp(namespace.filepath, namespace.encode)
         return "Encode complete."
 
     elif namespace.decode and namespace.encode is None:
-        message = Steganography.decode_from_bmp(namespace.filename)
+        message = Steganography.decode_from_bmp(namespace.filepath)
         if namespace.clear:
-            Steganography.delete_message_from_bmp(namespace.filename,
-                                                  False)
+            Steganography.delete_message_from_bmp(namespace.filepath)
         return message
 
     elif (namespace.clear and namespace.encode is None and
           not namespace.decode):
-        return Steganography.delete_message_from_bmp(namespace.filename, True)
+        return Steganography.delete_message_from_bmp(namespace.filepath)
 
     else:
         return "Wrong arguments."
