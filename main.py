@@ -9,7 +9,7 @@ import strings
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--filepath', nargs='?', required=True,
-                        help=strings.HELP_FILEPATH)
+                        help=strings.HELP_FILE_PATH)
     parser.add_argument('-e', '--encode', help=strings.HELP_ENCODE)
     parser.add_argument('-d', '--decode', action='store_const', const=True,
                         default=False, help=strings.HELP_DECODE)
