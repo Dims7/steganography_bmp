@@ -1,16 +1,17 @@
 # -*- coding: UTF-8 -*-
 
-import unittest
-from steganography import Steganography
-import random
-import string
-from crypter import Crypter
-from converter import Converter
-import shutil
-import main
 import os
+import random
+import shutil
+import string
 import sys
+import unittest
+
+import main
 import strings
+from converter import Converter
+from crypter import Crypter
+from steganography import Steganography
 
 
 def create_folder_with_tmp_bmp_files(path_to_bmp):
@@ -221,6 +222,73 @@ class TestArguments(unittest.TestCase):
             file_name = prefix + str(i) + suffix
             self.do_test_file(file_name, str(i))
         delete_folder_with_bmp_files(folder_name)
+
+
+class TestSecretListMessageConverter(unittest.TestCase):
+
+    def make_test_backward_compatibility(self, message):
+        for i in range(1, 10):
+            secret_list = Steganography._get_secret_list_from_message(message,
+                                                                      i)
+            result_message = Steganography._get_message_from_secret_list(
+                secret_list)
+            self.assertEqual(message, result_message)
+
+    def test_empty_string(self):
+        self.make_test_backward_compatibility("")
+
+    def test_any_string(self):
+        self.make_test_backward_compatibility("rwagewr")
+        self.make_test_backward_compatibility("aerhstrmntyk")
+        self.make_test_backward_compatibility("еуофАФУРЦоу5фгыу5е")
+        self.make_test_backward_compatibility("45b¶~}·ЁоMdИЦ7")
+        self.make_test_backward_compatibility("пкцкцЦУПЦПУУЦП")
+        self.make_test_backward_compatibility("*(&*^%$#%^&*UHGBNM<JH&^%$^&*(*&")
+
+    def test_random_words(self):
+        for _ in range(100):
+            string_for_test = "".join(random.SystemRandom().choices(
+                string.ascii_letters + string.digits, k=random.randint(3, 25)))
+            self.make_test_backward_compatibility(string_for_test)
+
+
+class TestCryptWithManyFiles(unittest.TestCase):
+
+    def get_files_names_from_counter(self, folder_name, counter):
+        prefix = folder_name + "/"
+        suffix = ".bmp"
+        result = []
+        for i in range(1, counter + 1):
+            result.append(prefix + str(i) + suffix)
+        return result
+
+    def make_test_backward_compatibility(self, message):
+        for i in range(1, 16):
+            folder_name = create_folder_with_tmp_bmp_files(
+                "bmp_files_for_test")
+            files = self.get_files_names_from_counter(folder_name, i)
+            Steganography.encode_to_many_bmp(message, files)
+            result = Steganography.decode_from_many_bmp(files)
+            delete_folder_with_bmp_files(folder_name)
+            self.assertEqual(message, result)
+
+
+    def test_empty_string(self):
+        self.make_test_backward_compatibility("")
+
+    def test_any_strings(self):
+        self.make_test_backward_compatibility("aregear")
+        self.make_test_backward_compatibility("пкфукф")
+        self.make_test_backward_compatibility("gwwagкпцфпукп")
+        self.make_test_backward_compatibility("wrgEGWGGWкпф")
+        self.make_test_backward_compatibility("54644}=р1†ђ")
+        self.make_test_backward_compatibility("№;%:?*()_)")
+
+    def test_random_words(self):
+        for _ in range(10):
+            string_for_test = "".join(random.SystemRandom().choices(
+                string.ascii_letters + string.digits, k=random.randint(3, 150)))
+            self.make_test_backward_compatibility(string_for_test)
 
 
 if __name__ == "__main__":

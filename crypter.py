@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 
+import base64
 import hashlib
 
 
@@ -8,24 +9,14 @@ class Crypter:
     @staticmethod
     def encode_text(input_text):
         """Кодирует текст по модифицированному шифру цезаря."""
-        UTF8_CHARS_COUNT = 55296
-        step = 0
-        result = ""
-        for char in input_text:
-            step += 1
-            result += chr((ord(char) + step) % UTF8_CHARS_COUNT)
-        return result
+        resultBytes = base64.b64encode(bytes(input_text, 'utf-8'))
+        return resultBytes.decode('utf-8')
 
     @staticmethod
     def decode_text(input_text):
         """Раскодирует текст, зашифрованный по модифицированному цезарю."""
-        UTF8_CHARS_COUNT = 55296
-        step = 0
-        result = ""
-        for char in input_text:
-            step += 1
-            result += chr(
-                (UTF8_CHARS_COUNT + ord(char) - step) % UTF8_CHARS_COUNT)
+        input_bytes = base64.b64decode(input_text)
+        result = input_bytes.decode('utf-8')
         return result
 
     @staticmethod

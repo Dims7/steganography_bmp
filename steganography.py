@@ -1,10 +1,14 @@
 # -*- coding: UTF-8 -*-
 
-from crypter import Crypter
-from converter import Converter
 import os
-import strings
 
+import strings
+from converter import Converter
+from crypter import Crypter
+
+
+# ToDO допилить методы для листинга
+# ToDo добавить аргументы командной строки для листинга
 
 class Steganography:
 
@@ -50,6 +54,41 @@ class Steganography:
 
         with open(file_name, 'wb') as f:
             f.write(file_data)
+
+    @staticmethod
+    def _get_secret_list_from_message(message, elements_count):
+        message_list = []
+        if elements_count > 0:
+            for i in range(elements_count):
+                message_list.append("")
+        else:
+            message_list.append("")
+        for i in range(len(message)):
+            message_list[i % elements_count] += message[i]
+        return message_list
+
+    @staticmethod
+    def _get_message_from_secret_list(secret_list):
+        message = ""
+        for k in range(len(secret_list[0])):
+            for i in range(len(secret_list)):
+                if len(secret_list[i]) > k:
+                    message += secret_list[i][k]
+        return message
+
+    @staticmethod
+    def encode_to_many_bmp(message, files):
+        message_list = Steganography._get_secret_list_from_message(message,
+                                                                   len(files))
+        for i in range(len(files)):
+            Steganography.encode_to_bmp(files[i], message_list[i])
+
+    @staticmethod
+    def decode_from_many_bmp(files):
+        message_list = []
+        for file in files:
+            message_list.append(Steganography.decode_from_bmp(file))
+        return Steganography._get_message_from_secret_list(message_list)
 
     @staticmethod
     def encode_to_bmp(file_name, message):
