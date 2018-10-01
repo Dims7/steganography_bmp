@@ -123,8 +123,7 @@ class Steganography:
 
     @staticmethod
     def delete_message_from_bmp(file_name):
-        """Удаляет шифрованное соообщение из .bmp файла при наличии.
-        Поле is_need_result_message отвечает за вывод результатов в консоль."""
+        """Удаляет шифрованное соообщение из .bmp файла при наличии."""
         with open(file_name, 'rb') as f:
             file_data = bytearray(f.read())
 
@@ -146,6 +145,18 @@ class Steganography:
             return strings.MESSAGE_DELETED
         else:
             return strings.MESSAGE_NOT_FOUND
+
+    @staticmethod
+    def delete_message_from_many_bmp(files):
+        """Удаляет шифрованное соообщение из списка .bmp файлов при наличии."""
+        results = []
+        for file in files:
+            results.append(Steganography.delete_message_from_bmp(file))
+
+        result_message = ""
+        if strings.MESSAGE_NOT_FOUND in results:
+            return strings.SOME_FILE_HAS_NOT_MESSAGE + "\n" + strings.MESSAGE_DELETED
+        return strings.MESSAGE_DELETED
 
     @staticmethod
     def _convert_text_to_special_byte_arr(input_text):
