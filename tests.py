@@ -181,8 +181,7 @@ class TestArguments(unittest.TestCase):
             self.assertEqual(strings.DATA_CORRUPTED, exception.args[0])
         else:
             self.assertEqual(
-                strings.SOME_FILE_HAS_NOT_MESSAGE + '\n' + strings.MESSAGE_DELETED,
-                result)
+                strings.MESSAGE_NOT_FOUND, result)
 
     def do_encode_with_delete_previous(self, file_name, encode_value):
         sys.argv = ['main.py', '-e', encode_value, '-f', file_name, '-c']

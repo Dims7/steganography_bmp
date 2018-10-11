@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from many_steganography_adapter import ManySteganographyAdapter
+from steganography import Steganography
 import sys
 import argparse
 import strings
@@ -21,27 +21,22 @@ def create_parser():
 def run():
     parser = create_parser()
     namespace = parser.parse_args(sys.argv[1:])
-    namespace.filepath = namespace.filepath.split()
 
     if namespace.encode is not None and not namespace.decode:
         if namespace.clear:
-            ManySteganographyAdapter.decode_from_many_bmp(namespace.filepath)
-        ManySteganographyAdapter.encode_to_many_bmp(namespace.filepath,
-                                                    namespace.encode)
+            Steganography.delete_message_from_bmp(namespace.filepath)
+        Steganography.encode_to_bmp(namespace.filepath, namespace.encode)
         return strings.ENCODE_COMPLETE
 
     elif namespace.decode and namespace.encode is None:
-        message = ManySteganographyAdapter.decode_from_many_bmp(
-            namespace.filepath)
+        message = Steganography.decode_from_bmp(namespace.filepath)
         if namespace.clear:
-            ManySteganographyAdapter.delete_message_from_many_bmp(
-                namespace.filepath)
+            Steganography.delete_message_from_bmp(namespace.filepath)
         return message
 
     elif (namespace.clear and namespace.encode is None and
           not namespace.decode):
-        return ManySteganographyAdapter.delete_message_from_many_bmp(
-            namespace.filepath)
+        return Steganography.delete_message_from_bmp(namespace.filepath)
     else:
         return strings.WRONG_ARGUMENTS
 
