@@ -77,20 +77,6 @@ class Steganography:
         return message
 
     @staticmethod
-    def encode_to_many_bmp(message, files):
-        message_list = Steganography._get_secret_list_from_message(message,
-                                                                   len(files))
-        for i in range(len(files)):
-            Steganography.encode_to_bmp(files[i], message_list[i])
-
-    @staticmethod
-    def decode_from_many_bmp(files):
-        message_list = []
-        for file in files:
-            message_list.append(Steganography.decode_from_bmp(file))
-        return Steganography._get_message_from_secret_list(message_list)
-
-    @staticmethod
     def encode_to_bmp(file_name, message):
         """Кодирует сообщение в .bmp файл."""
         with open(file_name, 'rb') as f:
@@ -145,18 +131,6 @@ class Steganography:
             return strings.MESSAGE_DELETED
         else:
             return strings.MESSAGE_NOT_FOUND
-
-    @staticmethod
-    def delete_message_from_many_bmp(files):
-        """Удаляет шифрованное соообщение из списка .bmp файлов при наличии."""
-        results = []
-        for file in files:
-            results.append(Steganography.delete_message_from_bmp(file))
-
-        result_message = ""
-        if strings.MESSAGE_NOT_FOUND in results:
-            return strings.SOME_FILE_HAS_NOT_MESSAGE + "\n" + strings.MESSAGE_DELETED
-        return strings.MESSAGE_DELETED
 
     @staticmethod
     def _convert_text_to_special_byte_arr(input_text):

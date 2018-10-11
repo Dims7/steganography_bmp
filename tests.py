@@ -12,6 +12,7 @@ import strings
 from converter import Converter
 from crypter import Crypter
 from steganography import Steganography
+from many_steganography_adapter import ManySteganographyAdapter
 
 
 def create_folder_with_tmp_bmp_files(path_to_bmp):
@@ -179,7 +180,9 @@ class TestArguments(unittest.TestCase):
         except Exception as exception:
             self.assertEqual(strings.DATA_CORRUPTED, exception.args[0])
         else:
-            self.assertEqual(strings.MESSAGE_NOT_FOUND, result)
+            self.assertEqual(
+                strings.SOME_FILE_HAS_NOT_MESSAGE + '\n' + strings.MESSAGE_DELETED,
+                result)
 
     def do_encode_with_delete_previous(self, file_name, encode_value):
         sys.argv = ['main.py', '-e', encode_value, '-f', file_name, '-c']
@@ -267,11 +270,10 @@ class TestCryptWithManyFiles(unittest.TestCase):
             folder_name = create_folder_with_tmp_bmp_files(
                 "bmp_files_for_test")
             files = self.get_files_names_from_counter(folder_name, i)
-            Steganography.encode_to_many_bmp(message, files)
-            result = Steganography.decode_from_many_bmp(files)
+            ManySteganographyAdapter.encode_to_many_bmp(message, files)
+            result = ManySteganographyAdapter.decode_from_many_bmp(files)
             delete_folder_with_bmp_files(folder_name)
             self.assertEqual(message, result)
-
 
     def test_empty_string(self):
         self.make_test_backward_compatibility("")
