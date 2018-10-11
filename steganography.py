@@ -56,27 +56,6 @@ class Steganography:
             f.write(file_data)
 
     @staticmethod
-    def _get_secret_list_from_message(message, elements_count):
-        message_list = []
-        if elements_count > 0:
-            for i in range(elements_count):
-                message_list.append("")
-        else:
-            message_list.append("")
-        for i in range(len(message)):
-            message_list[i % elements_count] += message[i]
-        return message_list
-
-    @staticmethod
-    def _get_message_from_secret_list(secret_list):
-        message = ""
-        for k in range(len(secret_list[0])):
-            for i in range(len(secret_list)):
-                if len(secret_list[i]) > k:
-                    message += secret_list[i][k]
-        return message
-
-    @staticmethod
     def encode_to_bmp(file_name, message):
         """Кодирует сообщение в .bmp файл."""
         with open(file_name, 'rb') as f:

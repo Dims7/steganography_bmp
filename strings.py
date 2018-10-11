@@ -5,6 +5,7 @@ MESSAGE_DELETED = "Message was deleted."
 MESSAGE_NOT_FOUND = "Message was not found."
 LONG_MESSAGE = "Message to long"
 SOME_FILE_HAS_NOT_MESSAGE = "Some file does not have a message"
+FILES_IN_PATH_REPEATED = "Files in path are repeated."
 
 HELP_FILE_PATH = "Path to the file"
 HELP_ENCODE = "Message encryption"
